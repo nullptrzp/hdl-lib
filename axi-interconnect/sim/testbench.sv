@@ -363,11 +363,11 @@ initial begin
         ARESETn = 1;
     #(5*CLOCK_PERIOD)
         fork
-            m0_write(0, 7, data0);
-            m1_write(0+64/8*8, 7, data1);    
+            m0_write(0, 7, data0);      //m0写s0
+            m1_write(32'h8000_0000, 7, data1);    //m1写s1
         join
-    // #(8*CLOCK_PERIOD)
-    //     m0_write(32'h8000_0000, 7, data2);
+    #(8*CLOCK_PERIOD)
+        m0_write(0+64/8*8, 7, data2);      //m0写s0
     #(8*CLOCK_PERIOD)
         m0_read(0, 7, get_data0);
     #(8*CLOCK_PERIOD)

@@ -85,12 +85,12 @@ module AXI_Slave_Mux_W#(
                 m_BVALID    = s1_BVALID;
             end
             default: begin
-                m_AWREADY   = '0;
-                m_WREADY    = '0;
-                m_BID       = '0;
-                m_BRESP     = '0;
-                m_BUSER     = '0;
-                m_BVALID    = '0;
+                m_AWREADY   = 0;
+                m_WREADY    = 0;
+                m_BID       = 0;
+                m_BRESP     = 0;
+                m_BUSER     = 0;
+                m_BVALID    = 0;
             end
         endcase
     end
@@ -100,15 +100,15 @@ module AXI_Slave_Mux_W#(
         case(awaddr[31])
             1'b0:begin
                 s0_AWVALID  = s_AWVALID;
-                s1_AWVALID  = '0;
+                s1_AWVALID  = 0;
             end
             1'b1:begin
-                s0_AWVALID  = '0;
+                s0_AWVALID  = 0;
                 s1_AWVALID  = s_AWVALID;
             end
             default: begin
-                s0_AWVALID  = '0;
-                s1_AWVALID  = '0;
+                s0_AWVALID  = 0;
+                s1_AWVALID  = 0;
             end
         endcase
     end
@@ -118,15 +118,15 @@ module AXI_Slave_Mux_W#(
         case(awaddr[31])
             1'b0:begin
                 s0_BREADY  = s_BREADY;
-                s1_BREADY  = '0;
+                s1_BREADY  = 0;
             end
             1'b1:begin
-                s0_BREADY  = '0;
+                s0_BREADY  = 0;
                 s1_BREADY  = s_BREADY;
             end
             default: begin
-                s0_BREADY  = '0;
-                s1_BREADY  = '0;
+                s0_BREADY  = 0;
+                s1_BREADY  = 0;
             end
         endcase
     end
@@ -136,15 +136,15 @@ module AXI_Slave_Mux_W#(
         case(awaddr[31])
             1'b0:begin
                 s0_WVALID  = s_WVALID;
-                s1_WVALID  = '0;
+                s1_WVALID  = 0;
             end
             1'b1:begin
-                s0_WVALID  = '0;
+                s0_WVALID  = 0;
                 s1_WVALID  = s_WVALID;
             end
             default: begin
-                s0_WVALID  = '0;
-                s1_WVALID  = '0;
+                s0_WVALID  = 0;
+                s1_WVALID  = 0;
             end
         endcase
     end
