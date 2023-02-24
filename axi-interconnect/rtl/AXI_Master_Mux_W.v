@@ -239,32 +239,32 @@ module AXI_Master_Mux_W#(
                 s_BREADY    =  m3_BREADY;
             end
             default: begin
-                s_AWID      =  '0;
-                s_AWADDR    =  '0;
-                s_AWLEN     =  '0;
-                s_AWSIZE    =  '0;
-                s_AWBURST   =  '0;
-                s_AWLOCK    =  '0;
-                s_AWCACHE   =  '0;
-                s_AWPROT    =  '0;
-                s_AWQOS     =  '0;
-                s_AWREGION  =  '0;
-                s_AWUSER    =  '0;
-                s_AWVALID   =  '0;
+                s_AWID      =  0;
+                s_AWADDR    =  0;
+                s_AWLEN     =  0;
+                s_AWSIZE    =  0;
+                s_AWBURST   =  0;
+                s_AWLOCK    =  0;
+                s_AWCACHE   =  0;
+                s_AWPROT    =  0;
+                s_AWQOS     =  0;
+                s_AWREGION  =  0;
+                s_AWUSER    =  0;
+                s_AWVALID   =  0;
                 //s_WID       =  '0;
-                s_WDATA     =  '0;
-                s_WSTRB     =  '0;
-                s_WLAST     =  '0;
-                s_WUSER     =  '0;
-                s_WVALID    =  '0;
-                s_BREADY    =  '0;
+                s_WDATA     =  0;
+                s_WSTRB     =  0;
+                s_WLAST     =  0;
+                s_WUSER     =  0;
+                s_WVALID    =  0;
+                s_BREADY    =  0;
             end
         endcase
     end
 
 
     //---------------------------------------------------------
-    always @(*) begin
+    always @(posedge ACLK) begin
         case({m0_wgrnt,m1_wgrnt,m2_wgrnt,m3_wgrnt})
             4'b1000: begin 
                 m0_AWREADY = m_AWREADY;
@@ -300,7 +300,7 @@ module AXI_Master_Mux_W#(
     end
 
     //---------------------------------------------------------
-    always @(*) begin
+    always @(posedge ACLK) begin
         case({m0_wgrnt,m1_wgrnt,m2_wgrnt,m3_wgrnt})
             4'b1000: begin 
                 m0_WREADY = m_WREADY;
@@ -336,7 +336,7 @@ module AXI_Master_Mux_W#(
     end    
 
     //---------------------------------------------------------
-    always @(*) begin
+    always @(posedge ACLK) begin
         case({m0_wgrnt,m1_wgrnt,m2_wgrnt,m3_wgrnt})
             4'b1000: begin 
                 m0_BVALID = m_BVALID;

@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 module AXI_Slave_Mux_W#(
     parameter   DATA_WIDTH  = 1024,
                 ADDR_WIDTH  = 64,
@@ -53,16 +55,16 @@ module AXI_Slave_Mux_W#(
     //写响应通道
     input                       s_BREADY    
 );
-
-    reg[63:0]    awaddr;     //写地址寄存器
+    localparam  TD = 2;
+    reg[31:0]    awaddr;     //写地址寄存器
 
     always @(posedge ACLK, negedge ARESETn)begin
         if(!ARESETn)
             awaddr <= 0;
         else if(s_AWVALID)                  //写地址握手信号启动时寄存写地址
-            awaddr <= s_AWADDR;
+            awaddr <= #TD s_AWADDR;
         else
-            awaddr <= awaddr;
+            awaddr <= #TD awaddr;
     end
 
     //---------------------------------------------------------
