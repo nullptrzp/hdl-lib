@@ -1,268 +1,434 @@
+`timescale 1ns/1ns
+
 module AXI_Master_Mux_R#(
     parameter   DATA_WIDTH  = 1024,
                 ADDR_WIDTH  = 64,
                 ID_WIDTH    = 8,
                 USER_WIDTH  = 8
 )(
-	/********* 时钟&复位 *********/
-	input                       ACLK,
-	input      	                ARESETn,
+	//input                       clk,
+	//input      	                rstn,
     /********** 0号主控 **********/
     //读地址通道
-    input      [ID_WIDTH-1:0]   m0_ARID,
-    input      [ADDR_WIDTH-1:0] m0_ARADDR,
-    input      [7:0]            m0_ARLEN,
-    input      [2:0]            m0_ARSIZE,
-    input      [1:0]            m0_ARBURST,
-    input                       m0_ARLOCK,
-    input      [3:0]            m0_ARCACHE,
-    input      [2:0]            m0_ARPROT,
-    input      [3:0]            m0_ARQOS,
-    input      [3:0]            m0_ARREGION,
-    input      [USER_WIDTH-1:0] m0_ARUSER,
-    input                       m0_ARVALID,
-    output reg                  m0_ARREADY,
+    input      [ID_WIDTH-1:0]   s0_ARID,
+    input      [ADDR_WIDTH-1:0] s0_ARADDR,
+    input      [7:0]            s0_ARLEN,
+    input      [2:0]            s0_ARSIZE,
+    input      [1:0]            s0_ARBURST,
+    input                       s0_ARLOCK,
+    input      [3:0]            s0_ARCACHE,
+    input      [2:0]            s0_ARPROT,
+    input      [3:0]            s0_ARQOS,
+    input      [3:0]            s0_ARREGION,
+    input      [USER_WIDTH-1:0] s0_ARUSER,
+    input                       s0_ARVALID,
+    output reg                  s0_ARREADY,
     //读数据通道
-    output reg                  m0_RVALID,
-    input                       m0_RREADY,
+    output reg                  s0_RVALID,
+    input                       s0_RREADY,
+    output reg    [ID_WIDTH-1:0]   s0_RID,
+	output reg    [DATA_WIDTH-1:0] s0_RDATA,
+	output reg    [1:0]	        s0_RRESP,
+    output reg                     s0_RLAST,
+	output    [USER_WIDTH-1:0]	s0_RUSER,
     /********** 1号主控 **********/
     //读地址通道
-    input      [ID_WIDTH-1:0]   m1_ARID,
-    input      [ADDR_WIDTH-1:0] m1_ARADDR,
-    input      [7:0]            m1_ARLEN,
-    input      [2:0]            m1_ARSIZE,
-    input      [1:0]            m1_ARBURST,
-    input                       m1_ARLOCK,
-    input      [3:0]            m1_ARCACHE,
-    input      [2:0]            m1_ARPROT,
-    input      [3:0]            m1_ARQOS,
-    input      [3:0]            m1_ARREGION,
-    input      [USER_WIDTH-1:0] m1_ARUSER,
-    input                       m1_ARVALID,
-    output reg                  m1_ARREADY,
+    input      [ID_WIDTH-1:0]   s1_ARID,
+    input      [ADDR_WIDTH-1:0] s1_ARADDR,
+    input      [7:0]            s1_ARLEN,
+    input      [2:0]            s1_ARSIZE,
+    input      [1:0]            s1_ARBURST,
+    input                       s1_ARLOCK,
+    input      [3:0]            s1_ARCACHE,
+    input      [2:0]            s1_ARPROT,
+    input      [3:0]            s1_ARQOS,
+    input      [3:0]            s1_ARREGION,
+    input      [USER_WIDTH-1:0] s1_ARUSER,
+    input                       s1_ARVALID,
+    output reg                  s1_ARREADY,
     //读数据通道
-    output reg                  m1_RVALID,
-    input                       m1_RREADY,
+    output reg                  s1_RVALID,
+    input                       s1_RREADY,
+    output reg    [ID_WIDTH-1:0]   s1_RID,
+	output reg    [DATA_WIDTH-1:0] s1_RDATA,
+	output reg    [1:0]	        s1_RRESP,
+    output reg                     s1_RLAST,
+	output    [USER_WIDTH-1:0]	s1_RUSER,
     /********** 2号主控 **********/
     //读地址通道
-    input      [ID_WIDTH-1:0]   m2_ARID,
-    input      [ADDR_WIDTH-1:0] m2_ARADDR,
-    input      [7:0]            m2_ARLEN,
-    input      [2:0]            m2_ARSIZE,
-    input      [1:0]            m2_ARBURST,
-    input                       m2_ARLOCK,
-    input      [3:0]            m2_ARCACHE,
-    input      [2:0]            m2_ARPROT,
-    input      [3:0]            m2_ARQOS,
-    input      [3:0]            m2_ARREGION,
-    input      [USER_WIDTH-1:0] m2_ARUSER,
-    input                       m2_ARVALID,
-    output reg                  m2_ARREADY,
+    input      [ID_WIDTH-1:0]   s2_ARID,
+    input      [ADDR_WIDTH-1:0] s2_ARADDR,
+    input      [7:0]            s2_ARLEN,
+    input      [2:0]            s2_ARSIZE,
+    input      [1:0]            s2_ARBURST,
+    input                       s2_ARLOCK,
+    input      [3:0]            s2_ARCACHE,
+    input      [2:0]            s2_ARPROT,
+    input      [3:0]            s2_ARQOS,
+    input      [3:0]            s2_ARREGION,
+    input      [USER_WIDTH-1:0] s2_ARUSER,
+    input                       s2_ARVALID,
+    output reg                  s2_ARREADY,
     //读数据通道
-    output reg                  m2_RVALID,
-    input                       m2_RREADY,
+    output reg                  s2_RVALID,
+    input                       s2_RREADY,
+    output reg    [ID_WIDTH-1:0]   s2_RID,
+	output reg    [DATA_WIDTH-1:0] s2_RDATA,
+	output reg    [1:0]	        s2_RRESP,
+    output reg                     s2_RLAST,
+	output     [USER_WIDTH-1:0]	s2_RUSER,
     /********** 3号主控 **********/
     //读地址通道
-    input      [ID_WIDTH-1:0]   m3_ARID,
-    input      [ADDR_WIDTH-1:0] m3_ARADDR,
-    input      [7:0]            m3_ARLEN,
-    input      [2:0]            m3_ARSIZE,
-    input      [1:0]            m3_ARBURST,
-    input                       m3_ARLOCK,
-    input      [3:0]            m3_ARCACHE,
-    input      [2:0]            m3_ARPROT,
-    input      [3:0]            m3_ARQOS,
-    input      [3:0]            m3_ARREGION,
-    input      [USER_WIDTH-1:0] m3_ARUSER,
-    input                       m3_ARVALID,
-    output reg                  m3_ARREADY,
+    input      [ID_WIDTH-1:0]   s3_ARID,
+    input      [ADDR_WIDTH-1:0] s3_ARADDR,
+    input      [7:0]            s3_ARLEN,
+    input      [2:0]            s3_ARSIZE,
+    input      [1:0]            s3_ARBURST,
+    input                       s3_ARLOCK,
+    input      [3:0]            s3_ARCACHE,
+    input      [2:0]            s3_ARPROT,
+    input      [3:0]            s3_ARQOS,
+    input      [3:0]            s3_ARREGION,
+    input      [USER_WIDTH-1:0] s3_ARUSER,
+    input                       s3_ARVALID,
+    output reg                  s3_ARREADY,
     //读数据通道
-    output reg                  m3_RVALID,
-    input                       m3_RREADY,
-    /******** 从机通用信号 ********/
+    output reg                  s3_RVALID,
+    input                       s3_RREADY,
+    output reg    [ID_WIDTH-1:0]   s3_RID,
+	output reg    [DATA_WIDTH-1:0] s3_RDATA,
+	output reg    [1:0]	        s3_RRESP,
+    output reg                     s3_RLAST,
+	output    [USER_WIDTH-1:0]	s3_RUSER,
+    //===============内部信号==================
     //读地址通道
-    output reg [ID_WIDTH-1:0]   s_ARID,
-    output reg [ADDR_WIDTH-1:0] s_ARADDR,
-    output reg [7:0]            s_ARLEN,
-    output reg [2:0]            s_ARSIZE,
-    output reg [1:0]            s_ARBURST,
-    output reg                  s_ARLOCK,
-    output reg [3:0]            s_ARCACHE,
-    output reg [2:0]            s_ARPROT,
-    output reg [3:0]            s_ARQOS,
-    output reg [3:0]            s_ARREGION,
-    output reg [USER_WIDTH-1:0] s_ARUSER,
-    output reg                  s_ARVALID,
+    output reg [ID_WIDTH-1:0]   s2m_ARID,
+    output reg [ADDR_WIDTH-1:0] s2m_ARADDR,
+    output reg [7:0]            s2m_ARLEN,
+    output reg [2:0]            s2m_ARSIZE,
+    output reg [1:0]            s2m_ARBURST,
+    output reg                  s2m_ARLOCK,
+    output reg [3:0]            s2m_ARCACHE,
+    output reg [2:0]            s2m_ARPROT,
+    output reg [3:0]            s2m_ARQOS,
+    output reg [3:0]            s2m_ARREGION,
+    output reg [USER_WIDTH-1:0] s2m_ARUSER,
+    output reg                  s2m_ARVALID,
+    input                       s2m_ARREADY,
     //读数据通道
-    output reg                  s_RREADY,
-    /******** 主机通用信号 ********/
-    input                       m_ARREADY,
-    input                       m_RVALID,
-    /******** 片选使能信号 ********/
-    input                       m0_rgrnt,
-	input                       m1_rgrnt,
-    input                       m2_rgrnt,
-    input                       m3_rgrnt
+    output reg                  s2m_RREADY,
+    input                       s2m_RVALID,
+    input     [ID_WIDTH-1:0]   s2m_RID,
+	input     [DATA_WIDTH-1:0] s2m_RDATA,
+	input     [1:0]	        s2m_RRESP,
+    input                      s2m_RLAST,
+	input     [USER_WIDTH-1:0]	s2m_RUSER,
+    
+    input                       s0_rgrnt,
+	input                       s1_rgrnt,
+    input                       s2_rgrnt,
+    input                       s3_rgrnt
 );
 
-    //=========================================================
-    //读取通路的多路复用主控信号
+always @(*) begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s2m_ARID      =   s0_ARID;
+            s2m_ARADDR    =   s0_ARADDR;
+            s2m_ARLEN     =   s0_ARLEN;
+            s2m_ARSIZE    =   s0_ARSIZE;
+            s2m_ARBURST   =   s0_ARBURST;
+            s2m_ARLOCK    =   s0_ARLOCK;
+            s2m_ARCACHE   =   s0_ARCACHE;
+            s2m_ARPROT    =   s0_ARPROT;
+            s2m_ARQOS     =   s0_ARQOS;
+            s2m_ARREGION  =   s0_ARREGION;
+            s2m_ARUSER    =   s0_ARUSER;
+            s2m_ARVALID   =   s0_ARVALID;
+            s2m_RREADY    =   s0_RREADY;
+        end
+        4'b0100: begin
+            s2m_ARID      =   s1_ARID;
+            s2m_ARADDR    =   s1_ARADDR;
+            s2m_ARLEN     =   s1_ARLEN;
+            s2m_ARSIZE    =   s1_ARSIZE;
+            s2m_ARBURST   =   s1_ARBURST;
+            s2m_ARLOCK    =   s1_ARLOCK;
+            s2m_ARCACHE   =   s1_ARCACHE;
+            s2m_ARPROT    =   s1_ARPROT;
+            s2m_ARQOS     =   s1_ARQOS;
+            s2m_ARREGION  =   s1_ARREGION;
+            s2m_ARUSER    =   s1_ARUSER;
+            s2m_ARVALID   =   s1_ARVALID;
+            s2m_RREADY    =   s1_RREADY;
+        end
+        4'b0010: begin
+            s2m_ARID      =   s2_ARID;
+            s2m_ARADDR    =   s2_ARADDR;
+            s2m_ARLEN     =   s2_ARLEN;
+            s2m_ARSIZE    =   s2_ARSIZE;
+            s2m_ARBURST   =   s2_ARBURST;
+            s2m_ARLOCK    =   s2_ARLOCK;
+            s2m_ARCACHE   =   s2_ARCACHE;
+            s2m_ARPROT    =   s2_ARPROT;
+            s2m_ARQOS     =   s2_ARQOS;
+            s2m_ARREGION  =   s2_ARREGION;
+            s2m_ARUSER    =   s2_ARUSER;
+            s2m_ARVALID   =   s2_ARVALID;
+            s2m_RREADY    =   s2_RREADY;
+        end
+        4'b0001: begin
+            s2m_ARID      =   s3_ARID;
+            s2m_ARADDR    =   s3_ARADDR;
+            s2m_ARLEN     =   s3_ARLEN;
+            s2m_ARSIZE    =   s3_ARSIZE;
+            s2m_ARBURST   =   s3_ARBURST;
+            s2m_ARLOCK    =   s3_ARLOCK;
+            s2m_ARCACHE   =   s3_ARCACHE;
+            s2m_ARPROT    =   s3_ARPROT;
+            s2m_ARQOS     =   s3_ARQOS;
+            s2m_ARREGION  =   s3_ARREGION;
+            s2m_ARUSER    =   s3_ARUSER;
+            s2m_ARVALID   =   s3_ARVALID;
+            s2m_RREADY    =   s3_RREADY;
+        end
+        default: begin
+            s2m_ARID      =   0;
+            s2m_ARADDR    =   0;
+            s2m_ARLEN     =   0;
+            s2m_ARSIZE    =   0;
+            s2m_ARBURST   =   0;
+            s2m_ARLOCK    =   0;
+            s2m_ARCACHE   =   0;
+            s2m_ARPROT    =   0;
+            s2m_ARQOS     =   0;
+            s2m_ARREGION  =   0;
+            s2m_ARUSER    =   0;
+            s2m_ARVALID   =   0;
+            s2m_RREADY    =   0;
+        end
+    endcase
+end
 
-    //---------------------------------------------------------
-    //其他信号复用
-    always @(*) begin
-        case({m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt})
-            4'b1000: begin
-                s_ARID      =   m0_ARID;
-                s_ARADDR    =   m0_ARADDR;
-                s_ARLEN     =   m0_ARLEN;
-                s_ARSIZE    =   m0_ARSIZE;
-                s_ARBURST   =   m0_ARBURST;
-                s_ARLOCK    =   m0_ARLOCK;
-                s_ARCACHE   =   m0_ARCACHE;
-                s_ARPROT    =   m0_ARPROT;
-                s_ARQOS     =   m0_ARQOS;
-                s_ARREGION  =   m0_ARREGION;
-                s_ARUSER    =   m0_ARUSER;
-                s_ARVALID   =   m0_ARVALID;
-                s_RREADY    =   m0_RREADY;
-            end
-            4'b0100: begin
-                s_ARID      =   m1_ARID;
-                s_ARADDR    =   m1_ARADDR;
-                s_ARLEN     =   m1_ARLEN;
-                s_ARSIZE    =   m1_ARSIZE;
-                s_ARBURST   =   m1_ARBURST;
-                s_ARLOCK    =   m1_ARLOCK;
-                s_ARCACHE   =   m1_ARCACHE;
-                s_ARPROT    =   m1_ARPROT;
-                s_ARQOS     =   m1_ARQOS;
-                s_ARREGION  =   m1_ARREGION;
-                s_ARUSER    =   m1_ARUSER;
-                s_ARVALID   =   m1_ARVALID;
-                s_RREADY    =   m1_RREADY;
-            end
-            4'b0010: begin
-                s_ARID      =   m2_ARID;
-                s_ARADDR    =   m2_ARADDR;
-                s_ARLEN     =   m2_ARLEN;
-                s_ARSIZE    =   m2_ARSIZE;
-                s_ARBURST   =   m2_ARBURST;
-                s_ARLOCK    =   m2_ARLOCK;
-                s_ARCACHE   =   m2_ARCACHE;
-                s_ARPROT    =   m2_ARPROT;
-                s_ARQOS     =   m2_ARQOS;
-                s_ARREGION  =   m2_ARREGION;
-                s_ARUSER    =   m2_ARUSER;
-                s_ARVALID   =   m2_ARVALID;
-                s_RREADY    =   m2_RREADY;
-            end
-            4'b0001: begin
-                s_ARID      =   m3_ARID;
-                s_ARADDR    =   m3_ARADDR;
-                s_ARLEN     =   m3_ARLEN;
-                s_ARSIZE    =   m3_ARSIZE;
-                s_ARBURST   =   m3_ARBURST;
-                s_ARLOCK    =   m3_ARLOCK;
-                s_ARCACHE   =   m3_ARCACHE;
-                s_ARPROT    =   m3_ARPROT;
-                s_ARQOS     =   m3_ARQOS;
-                s_ARREGION  =   m3_ARREGION;
-                s_ARUSER    =   m3_ARUSER;
-                s_ARVALID   =   m3_ARVALID;
-                s_RREADY    =   m3_RREADY;
-            end
-            default: begin
-                s_ARID      =   0;
-                s_ARADDR    =   0;
-                s_ARLEN     =   0;
-                s_ARSIZE    =   0;
-                s_ARBURST   =   0;
-                s_ARLOCK    =   0;
-                s_ARCACHE   =   0;
-                s_ARPROT    =   0;
-                s_ARQOS     =   0;
-                s_ARREGION  =   0;
-                s_ARUSER    =   0;
-                s_ARVALID   =   0;
-                s_RREADY    =   0;
-            end
+//ARREADY信号复用
+always @(*) begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s0_ARREADY  = s2m_ARREADY;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = 0;
+        end
+        4'b0100: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = s2m_ARREADY;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = 0;
+        end
+        4'b0010: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = s2m_ARREADY;
+            s3_ARREADY  = 0;
+        end
+        4'b0001: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = s2m_ARREADY;
+        end
+        default: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = 0;
+        end
+    endcase
+end
 
-        endcase
-    end
+//RVALID信号复用
+always @(*)begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s0_RVALID  = s2m_RVALID;
+            s1_RVALID  = 0;
+            s2_RVALID  = 0;
+            s3_RVALID  = 0;
+        end
+        4'b0100: begin
+            s0_RVALID  = 0;
+            s1_RVALID  = s2m_RVALID;
+            s2_RVALID  = 0;
+            s3_RVALID  = 0;
+        end
+        4'b0010: begin
+            s0_RVALID  = 0;
+            s1_RVALID  = 0;
+            s2_RVALID  = s2m_RVALID;
+            s3_RVALID  = 0;
+        end
+        4'b0001: begin
+            s0_RVALID  = 0;
+            s1_RVALID  = 0;
+            s2_RVALID  = 0;
+            s3_RVALID  = s2m_RVALID;
+        end
+        default: begin
+            s0_RVALID  = 0;
+            s1_RVALID  = 0;
+            s2_RVALID  = 0;
+            s3_RVALID  = 0;
+        end
+    endcase
+end
 
-    //---------------------------------------------------------
-    //ARREADY信号复用
-    always @(*) begin
-        case({m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt})
-            4'b1000: begin
-                m0_ARREADY  = m_ARREADY;
-                m1_ARREADY  = 0;
-                m2_ARREADY  = 0;
-                m3_ARREADY  = 0;
-            end
-            4'b0100: begin
-                m0_ARREADY  = 0;
-                m1_ARREADY  = m_ARREADY;
-                m2_ARREADY  = 0;
-                m3_ARREADY  = 0;
-            end
-            4'b0010: begin
-                m0_ARREADY  = 0;
-                m1_ARREADY  = 0;
-                m2_ARREADY  = m_ARREADY;
-                m3_ARREADY  = 0;
-            end
-            4'b0001: begin
-                m0_ARREADY  = 0;
-                m1_ARREADY  = 0;
-                m2_ARREADY  = 0;
-                m3_ARREADY  = m_ARREADY;
-            end
-            default: begin
-                m0_ARREADY  = 0;
-                m1_ARREADY  = 0;
-                m2_ARREADY  = 0;
-                m3_ARREADY  = 0;
-            end
-        endcase
-    end
+//RID信号复用
+always @(*) begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s0_RID  = s2m_RID;
+            s1_RID  = 0;
+            s2_RID  = 0;
+            s3_RID  = 0;
+        end
+        4'b0100: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = s2m_RID;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = 0;
+        end
+        4'b0010: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = s2m_RID;
+            s3_ARREADY  = 0;
+        end
+        4'b0001: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = s2m_RID;
+        end
+        default: begin
+            s0_ARREADY  = 0;
+            s1_ARREADY  = 0;
+            s2_ARREADY  = 0;
+            s3_ARREADY  = 0;
+        end
+    endcase
+end
 
-    //---------------------------------------------------------
-    //RVALID信号复用
-    always @(*)begin
-        case({m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt})
-            4'b1000: begin
-                m0_RVALID  = m_RVALID;
-                m1_RVALID  = 0;
-                m2_RVALID  = 0;
-                m3_RVALID  = 0;
-            end
-            4'b0100: begin
-                m0_RVALID  = 0;
-                m1_RVALID  = m_RVALID;
-                m2_RVALID  = 0;
-                m3_RVALID  = 0;
-            end
-            4'b0010: begin
-                m0_RVALID  = 0;
-                m1_RVALID  = 0;
-                m2_RVALID  = m_RVALID;
-                m3_RVALID  = 0;
-            end
-            4'b0001: begin
-                m0_RVALID  = 0;
-                m1_RVALID  = 0;
-                m2_RVALID  = 0;
-                m3_RVALID  = m_RVALID;
-            end
-            default: begin
-                m0_RVALID  = 0;
-                m1_RVALID  = 0;
-                m2_RVALID  = 0;
-                m3_RVALID  = 0;
-            end
-        endcase
-    end
+//RDATA信号复用
+always @(*) begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s0_RDATA  = s2m_RDATA;
+            s1_RDATA  = 0;
+            s2_RDATA  = 0;
+            s3_RDATA  = 0;
+        end
+        4'b0100: begin
+            s0_RDATA  = 0;
+            s1_RDATA  = s2m_RDATA;
+            s2_RDATA  = 0;
+            s3_RDATA  = 0;
+        end
+        4'b0010: begin
+            s0_RDATA  = 0;
+            s1_RDATA  = 0;
+            s2_RDATA  = s2m_RDATA;
+            s3_RDATA  = 0;
+        end
+        4'b0001: begin
+            s0_RDATA  = 0;
+            s1_RDATA  = 0;
+            s2_RDATA  = 0;
+            s3_RDATA  = s2m_RDATA;
+        end
+        default: begin
+            s0_RDATA  = 0;
+            s1_RDATA  = 0;
+            s2_RDATA  = 0;
+            s3_RDATA  = 0;
+        end
+    endcase
+end
+
+//RRESP信号复用
+always @(*) begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s0_RRESP  = s2m_RRESP;
+            s1_RRESP  = 0;
+            s2_RRESP  = 0;
+            s3_RRESP  = 0;
+        end
+        4'b0100: begin
+            s0_RRESP  = 0;
+            s1_RRESP  = s2m_RRESP;
+            s2_RRESP  = 0;
+            s3_RRESP  = 0;
+        end
+        4'b0010: begin
+            s0_RRESP  = 0;
+            s1_RRESP  = 0;
+            s2_RRESP  = s2m_RRESP;
+            s3_RRESP  = 0;
+        end
+        4'b0001: begin
+            s0_RRESP  = 0;
+            s1_RRESP  = 0;
+            s2_RRESP  = 0;
+            s3_RRESP  = s2m_RRESP;
+        end
+        default: begin
+            s0_RRESP  = 0;
+            s1_RRESP  = 0;
+            s2_RRESP  = 0;
+            s3_RRESP  = 0;
+        end
+    endcase
+end
+
+//RLAST信号复用
+always @(*) begin
+    case({s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt})
+        4'b1000: begin
+            s0_RLAST  = s2m_RLAST;
+            s1_RLAST  = 0;
+            s2_RLAST  = 0;
+            s3_RLAST  = 0;
+        end
+        4'b0100: begin
+            s0_RLAST  = 0;
+            s1_RLAST  = s2m_RLAST;
+            s2_RLAST  = 0;
+            s3_RLAST  = 0;
+        end
+        4'b0010: begin
+            s0_RLAST  = 0;
+            s1_RLAST  = 0;
+            s2_RLAST  = s2m_RLAST;
+            s3_RLAST  = 0;
+        end
+        4'b0001: begin
+            s0_RLAST  = 0;
+            s1_RLAST  = 0;
+            s2_RLAST  = 0;
+            s3_RLAST  = s2m_RLAST;
+        end
+        default: begin
+            s0_RLAST  = 0;
+            s1_RLAST  = 0;
+            s2_RLAST  = 0;
+            s3_RLAST  = 0;
+        end
+    endcase
+end
+
+assign s0_RUSER = 0;
+assign s1_RUSER = 0;
+assign s2_RUSER = 0;
+assign s3_RUSER = 0;
 
 endmodule

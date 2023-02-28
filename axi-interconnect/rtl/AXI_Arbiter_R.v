@@ -3,26 +3,34 @@ module AXI_Arbiter_R (
 	input                       ACLK,
 	input      	                ARESETn,
 	/********** 0号主控 **********/
-    input                       m0_ARVALID,
-    input                       m0_RREADY,
+    input                       s0_ARVALID,
+    input                       s0_ARREADY,
+    input                       s0_RVALID,
+    input                       s0_RREADY,
+    input                       s0_RLAST,
 	/********** 1号主控 **********/
-    input                       m1_ARVALID,
-    input                       m1_RREADY,
+    input                       s1_ARVALID,
+    input                       s1_ARREADY,
+    input                       s1_RVALID,
+    input                       s1_RREADY,
+    input                       s1_RLAST,
 	/********** 2号主控 **********/
-    input                       m2_ARVALID,
-    input                       m2_RREADY,
+    input                       s2_ARVALID,
+    input                       s2_ARREADY,
+    input                       s2_RVALID,
+    input                       s2_RREADY,
+    input                       s2_RLAST,
 	/********** 3号主控 **********/
-    input                       m3_ARVALID,
-    input                       m3_RREADY,
-    /******* 主控通用信号 ********/
-
-    input                       m_RVALID,
-    input                       m_RLAST,
+    input                       s3_ARVALID,
+    input                       s3_ARREADY,
+    input                       s3_RVALID,
+    input                       s3_RREADY,
+    input                       s3_RLAST,
 	
-    output reg                  m0_rgrnt,
-	output reg	                m1_rgrnt,
-    output reg                  m2_rgrnt,
-    output reg                  m3_rgrnt
+    output reg                  s0_rgrnt,
+	output reg	                s1_rgrnt,
+    output reg                  s2_rgrnt,
+    output reg                  s3_rgrnt
 );
 
     localparam AXI_MASTER_0 = 2'b00;
@@ -33,102 +41,124 @@ module AXI_Arbiter_R (
     reg state;
     reg next_state; 
 
-    //---------------------------------------------------------
-    //状态译码
-    always @(*) begin
-        case (state)
-            AXI_MASTER_0: begin                 //0号主机占用总线状态，响应请求优先级为：0>1>2>3
-                if(m0_ARVALID)                  //如果0号主机请求总线
-                    next_state = AXI_MASTER_0;  //保持0号主机占用总线状态
-                else if(m_RVALID||m0_RREADY)    //如果还在写入数据
-                    next_state = AXI_MASTER_0;  //保持0号主机占用总线状态
-                else if(m_RLAST&&m_RVALID)      //读取完成
-                    next_state = AXI_MASTER_1;  //更换优先级
-                else if(m1_ARVALID)             //如果1号主机请求总线
-                    next_state = AXI_MASTER_1;  //下一状态为1号主机占用总线
-                else if(m2_ARVALID)             //如果2号主机请求总线
-                    next_state = AXI_MASTER_2;  //下一状态为2号主机占用总线
-                else if(m3_ARVALID)             //如果3号主机请求总线
-                    next_state = AXI_MASTER_3;  //下一状态为3号主机占用总线
-                else                            //都未请求总线
-                    next_state = AXI_MASTER_0;  //保持0号主机占用总线状态
+//状态译码
+always @(*) begin
+    case (state)
+        AXI_MASTER_0: begin
+            if(s0_ARVALID&&s0_ARREADY) begin
+                next_state = AXI_MASTER_0;
             end
-            AXI_MASTER_1: begin                 //1号主机占用总线状态，响应请求优先级为：1>2>3>0
-                if(m1_ARVALID)
-                    next_state = AXI_MASTER_1;
-                else if(m_RVALID||m1_RREADY)
-                    next_state = AXI_MASTER_1;
-                else if(m_RLAST&&m_RVALID)
-                    next_state = AXI_MASTER_2;
-                else if(m2_ARVALID)
-                    next_state = AXI_MASTER_2;
-                else if(m3_ARVALID)
-                    next_state = AXI_MASTER_3;
-                else if(m0_ARVALID)
-                    next_state = AXI_MASTER_0;
-                else
-                    next_state = AXI_MASTER_1;
+            else if(s0_RVALID||s0_RREADY) begin
+                next_state = AXI_MASTER_0;
             end
-            AXI_MASTER_2: begin                 //2号主机占用总线状态，响应请求优先级为：2>3>0>1
-                if(m2_ARVALID)
-                    next_state = AXI_MASTER_2;
-                else if(m_RVALID||m2_RREADY)
-                    next_state = AXI_MASTER_2;
-                else if(m_RLAST&&m_RVALID)
-                    next_state = AXI_MASTER_3;
-                else if(m3_ARVALID)
-                    next_state = AXI_MASTER_3;
-                else if(m0_ARVALID)
-                    next_state = AXI_MASTER_0;
-                else if(m1_ARVALID)
-                    next_state = AXI_MASTER_1;
-                else
-                    next_state = AXI_MASTER_2;
+            else if(s0_RLAST&&s0_RVALID) begin
+                next_state = AXI_MASTER_1;
             end
-            AXI_MASTER_3: begin                 //3号主机占用总线状态，响应请求优先级为：3>0>1>2
-                if(m3_ARVALID)
-                    next_state = AXI_MASTER_3;  
-                else if(m_RVALID||m3_RREADY)
-                    next_state = AXI_MASTER_3;
-                else if(m_RLAST&&m_RVALID)
-                    next_state = AXI_MASTER_0;
-                else if(m0_ARVALID)
-                    next_state = AXI_MASTER_0;
-                else if(m1_ARVALID)
-                    next_state = AXI_MASTER_1;
-                else if(m2_ARVALID)
-                    next_state = AXI_MASTER_2;
-                else
-                    next_state = AXI_MASTER_3;
+            else if(s1_ARVALID) begin
+                next_state = AXI_MASTER_1;
             end
-            default:
-                next_state = AXI_MASTER_0;      //默认状态为0号主机占用总线
-        endcase
-    end
+            else if(s2_ARVALID) begin
+                next_state = AXI_MASTER_2;
+            end
+            else if(s3_ARVALID) begin
+                next_state = AXI_MASTER_3;
+            end
+            else begin
+                next_state = AXI_MASTER_0;
+            end
+        end
+        AXI_MASTER_1: begin
+            if(s1_ARVALID&&s1_ARREADY) begin
+                next_state = AXI_MASTER_1;
+            end
+            else if(s1_RVALID||s1_RREADY) begin
+                next_state = AXI_MASTER_1;
+            end
+            else if(s1_RLAST&&s1_RVALID) begin
+                next_state = AXI_MASTER_2;
+            end
+            else if(s2_ARVALID) begin
+                next_state = AXI_MASTER_2;
+            end
+            else if(s3_ARVALID) begin
+                next_state = AXI_MASTER_3;
+            end
+            else if(s0_ARVALID) begin
+                next_state = AXI_MASTER_0;
+            end
+            else begin
+                next_state = AXI_MASTER_1;
+            end
+        end
+        AXI_MASTER_2: begin
+            if(s2_ARVALID&&s2_ARREADY) begin
+                next_state = AXI_MASTER_2;
+            end
+            else if(s2_RVALID||s2_RREADY) begin
+                next_state = AXI_MASTER_2;
+            end
+            else if(s2_RLAST&&s2_RVALID) begin
+                next_state = AXI_MASTER_3;
+            end
+            else if(s3_ARVALID) begin
+                next_state = AXI_MASTER_3;
+            end
+            else if(s0_ARVALID) begin
+                next_state = AXI_MASTER_0;
+            end
+            else if(s1_ARVALID) begin
+                next_state = AXI_MASTER_1;
+            end
+            else begin
+                next_state = AXI_MASTER_2;
+            end
+        end
+        AXI_MASTER_3: begin
+            if(s3_ARVALID&&s3_ARREADY) begin
+                next_state = AXI_MASTER_3;
+            end
+            else if(s3_RVALID||s3_RREADY) begin
+                next_state = AXI_MASTER_3;
+            end
+            else if(s3_RLAST&&s3_RVALID) begin
+                next_state = AXI_MASTER_0;
+            end
+            else if(s0_ARVALID) begin
+                next_state = AXI_MASTER_0;
+            end
+            else if(s1_ARVALID) begin
+                next_state = AXI_MASTER_1;
+            end
+            else if(s2_ARVALID) begin
+                next_state = AXI_MASTER_2;
+            end
+            else begin
+                next_state = AXI_MASTER_3;
+            end
+        end
+        default: begin
+            next_state = AXI_MASTER_0;
+        end
+    endcase
+end
 
+//更新状态寄存器
+always @(posedge ACLK, negedge ARESETn)begin
+    if(!ARESETn)
+        state <= AXI_MASTER_0;
+    else
+        state <= next_state;
+end
 
-    //---------------------------------------------------------
-    //更新状态寄存器
-    always @(posedge ACLK, negedge ARESETn)begin
-        if(!ARESETn)
-            state <= AXI_MASTER_0;         //默认状态为0号主机占用总线
-        else
-            state <= next_state;
-    end
-
-    //---------------------------------------------------------
-    //利用状态寄存器输出控制结果
-    always @(*) begin
-        case (state)
-            AXI_MASTER_0: {m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt} = 4'b1000;
-            AXI_MASTER_1: {m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt} = 4'b0100;
-            AXI_MASTER_2: {m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt} = 4'b0010;
-            AXI_MASTER_3: {m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt} = 4'b0001;
-            default:      {m0_rgrnt,m1_rgrnt,m2_rgrnt,m3_rgrnt} = 4'b0000;
-        endcase
-    end
-
-
-
+//输出控制结果
+always @(*) begin
+    case (state)
+        AXI_MASTER_0: {s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt} = 4'b1000;
+        AXI_MASTER_1: {s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt} = 4'b0100;
+        AXI_MASTER_2: {s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt} = 4'b0010;
+        AXI_MASTER_3: {s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt} = 4'b0001;
+        default:      {s0_rgrnt,s1_rgrnt,s2_rgrnt,s3_rgrnt} = 4'b0000;
+    endcase
+end
 
 endmodule
