@@ -46,8 +46,9 @@ task s1_write(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_
     s1_WLAST <= 0;
 endtask
 
-task s2_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
+task s2_write(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
     @(posedge ACLK);
+        s2_AWID <= id;
         s2_AWLEN <= len;
         s2_AWVALID <= 1;
         s2_WVALID <= 1;
@@ -59,7 +60,7 @@ task s2_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0
     while(s2_WREADY == 0) @(posedge ACLK);
     for(int i=0; i<=len; i++) begin
         s2_WDATA <= data[i];
-        if(i==len-1) s2_WLAST <= 1;
+        if(i==len) s2_WLAST <= 1;
         @(posedge ACLK);
         while(s2_WREADY == 0) @(posedge ACLK);
     end
@@ -69,8 +70,9 @@ task s2_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0
     s2_WLAST <= 0;
 endtask
 
-task s3_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
+task s3_write(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
     @(posedge ACLK);
+        s3_AWID <= id;
         s3_AWLEN <= len;
         s3_AWVALID <= 1;
         s3_WVALID <= 1;
@@ -82,7 +84,7 @@ task s3_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0
     while(s3_WREADY == 0) @(posedge ACLK);
     for(int i=0; i<=len; i++) begin
         s3_WDATA <= data[i];
-        if(i==len-1) s3_WLAST <= 1;
+        if(i==len) s3_WLAST <= 1;
         @(posedge ACLK);
         while(s3_WREADY == 0) @(posedge ACLK);
     end
@@ -138,36 +140,48 @@ task automatic s1_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input b
     s1_RREADY <= 0;
 endtask
 
-task automatic s2_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
+task automatic s2_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
+    s2_ARID = id;
     s2_ARLEN = len;
     s2_ARVALID <= 1;
-    @(posedge ACLK);
+    s2_ARADDR <= addr;
+    //@(posedge ACLK);
     while(s2_ARREADY == 0) @(posedge ACLK);
-    s2_RREADY <= 1;
     s2_ARVALID <= 0;
-    while(s2_RVALID == 0) @(posedge ACLK);
+    @(posedge ACLK);
+    s2_RREADY <= 1;
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(s2_RVALID&s2_RREADY != 1) @(posedge ACLK);
-        data[i] = s2_RDATA;
+        while(((s2_RVALID&s2_RREADY)!=1) || s2_RID!=id) @(posedge ACLK);
+        data[i] = s2_RDATA;   
     end
+    @(posedge ACLK);
+    while(s2_RLAST == 0) @(posedge ACLK);
+    @(posedge ACLK);
+    while(s2_RVALID == 1) @(posedge ACLK);
     s2_RREADY <= 0;
 endtask
 
-task automatic s3_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
+task automatic s3_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
+    s3_ARID = id;
     s3_ARLEN = len;
     s3_ARVALID <= 1;
-    @(posedge ACLK);
+    s3_ARADDR <= addr;
+    //@(posedge ACLK);
     while(s3_ARREADY == 0) @(posedge ACLK);
-    s3_RREADY <= 1;
     s3_ARVALID <= 0;
-    while(s3_RVALID == 0) @(posedge ACLK);
+    @(posedge ACLK);
+    s3_RREADY <= 1;
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(s3_RVALID&s3_RREADY != 1) @(posedge ACLK);
-        data[i] = s3_RDATA;
+        while(((s3_RVALID&s3_RREADY)!=1) || s3_RID!=id) @(posedge ACLK);
+        data[i] = s3_RDATA;   
     end
+    @(posedge ACLK);
+    while(s3_RLAST == 0) @(posedge ACLK);
+    @(posedge ACLK);
+    while(s3_RVALID == 1) @(posedge ACLK);
     s3_RREADY <= 0;
 endtask

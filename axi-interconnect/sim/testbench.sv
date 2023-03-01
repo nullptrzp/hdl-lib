@@ -428,15 +428,17 @@ initial begin
         ARESETn = 1;
     #(5*CLOCK_PERIOD)
         fork
-            s0_write(0, 0, 7, data0);      //s0写s0
-            s1_write(1, 64, 7, data1);    //s1写s0
+            s0_write(0, 0, 7, data0);      //master0写slave0
+            s1_write(1, 64, 7, data1);     //master1写slave1
         join
-    // #(8*CLOCK_PERIOD)
-    //     s0_write(0+64/8*8, 7, data2);      //s0写s0
     #(8*CLOCK_PERIOD)
-        s0_read(0, 0, 7, get_data0);
+        s0_read(0, 0, 7, get_data0);        //master0读slave0
     #(8*CLOCK_PERIOD)
-        s1_read(1, 0+64/8*8, 7, get_data1);
+        s1_read(1, 0+64/8*8, 7, get_data1); //master1读slave0
+    #(8*CLOCK_PERIOD)
+        s0_write(0, 32'h8000_0000,7, data2);//master0写slave1
+    #(8*CLOCK_PERIOD)
+        s0_read(0, 32'h8000_0000, 7, get_data2);//master0读slave1
     #(5*CLOCK_PERIOD) $finish;
 end
 
