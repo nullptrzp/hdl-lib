@@ -94,17 +94,18 @@ endtask
 
 task automatic s0_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
+    s0_ARID = id;
     s0_ARLEN = len;
     s0_ARVALID <= 1;
     s0_ARADDR <= addr;
-    @(posedge ACLK);
+    //@(posedge ACLK);
     while(s0_ARREADY == 0) @(posedge ACLK);
     s0_ARVALID <= 0;
     @(posedge ACLK);
     s0_RREADY <= 1;
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(((s0_RVALID&s0_RREADY)!=1) || s0_RID!=2'b00) @(posedge ACLK);
+        while(((s0_RVALID&s0_RREADY)!=1) || s0_RID!=id) @(posedge ACLK);
         data[i] = s0_RDATA; 
     end
     @(posedge ACLK);
@@ -116,17 +117,18 @@ endtask
 
 task automatic s1_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
+    s1_ARID = id;
     s1_ARLEN = len;
     s1_ARVALID <= 1;
     s1_ARADDR <= addr;
-    @(posedge ACLK);
+    //@(posedge ACLK);
     while(s1_ARREADY == 0) @(posedge ACLK);
     s1_ARVALID <= 0;
     @(posedge ACLK);
     s1_RREADY <= 1;
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(((s1_RVALID&s1_RREADY)!=1) || s1_RID!=2'b01) @(posedge ACLK);
+        while(((s1_RVALID&s1_RREADY)!=1) || s1_RID!=id) @(posedge ACLK);
         data[i] = s1_RDATA;   
     end
     @(posedge ACLK);

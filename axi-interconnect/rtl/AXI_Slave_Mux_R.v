@@ -112,7 +112,7 @@ always @(*) begin
 end
 
 always @(*) begin
-    case(s2m_ARADDR)
+    case(s2m_ARADDR[31])
         1'b0: begin
             s2m_ARREADY = m0_ARREADY;
             s2m_RID     = m0_RID;

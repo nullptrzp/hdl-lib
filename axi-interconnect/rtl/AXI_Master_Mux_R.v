@@ -292,28 +292,28 @@ always @(*) begin
             s3_RID  = 0;
         end
         4'b0100: begin
-            s0_ARREADY  = 0;
-            s1_ARREADY  = s2m_RID;
-            s2_ARREADY  = 0;
-            s3_ARREADY  = 0;
+            s0_RID  = 0;
+            s1_RID  = s2m_RID;
+            s2_RID  = 0;
+            s3_RID  = 0;
         end
         4'b0010: begin
-            s0_ARREADY  = 0;
-            s1_ARREADY  = 0;
-            s2_ARREADY  = s2m_RID;
-            s3_ARREADY  = 0;
+            s0_RID  = 0;
+            s1_RID  = 0;
+            s2_RID  = s2m_RID;
+            s3_RID  = 0;
         end
         4'b0001: begin
-            s0_ARREADY  = 0;
-            s1_ARREADY  = 0;
-            s2_ARREADY  = 0;
-            s3_ARREADY  = s2m_RID;
+            s0_RID  = 0;
+            s1_RID  = 0;
+            s2_RID  = 0;
+            s3_RID  = s2m_RID;
         end
         default: begin
-            s0_ARREADY  = 0;
-            s1_ARREADY  = 0;
-            s2_ARREADY  = 0;
-            s3_ARREADY  = 0;
+            s0_RID  = 0;
+            s1_RID  = 0;
+            s2_RID  = 0;
+            s3_RID  = 0;
         end
     endcase
 end
