@@ -1,169 +1,171 @@
-task m0_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
+task s0_write(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
     @(posedge ACLK);
-        m0_AWLEN <= len;
-        m0_AWVALID <= 1;
-        m0_WVALID <= 1;
-        m0_AWADDR <= addr;
+        s0_AWID <= id;
+        s0_AWLEN <= len;
+        s0_AWVALID <= 1;
+        s0_WVALID <= 1;
+        s0_AWADDR <= addr;
     @(posedge ACLK);
-    while(m0_AWREADY == 0) @(posedge ACLK);
-    m0_BREADY <= 1;
-    m0_AWVALID <= 0;
-    while(m0_WREADY == 0) @(posedge ACLK);
+    while(s0_AWREADY == 0) @(posedge ACLK);
+    s0_BREADY <= 1;
+    s0_AWVALID <= 0;
+    while(s0_WREADY == 0) @(posedge ACLK);
     for(int i=0; i<=len; i++) begin
-        m0_WDATA <= data[i];
-        if(i==len) m0_WLAST <= 1;
+        s0_WDATA <= data[i];
+        if(i==len) s0_WLAST <= 1;
         @(posedge ACLK);
-        while(m0_WREADY == 0) @(posedge ACLK);
+        while(s0_WREADY == 0) @(posedge ACLK);
     end
-    while(m0_BVALID == 0) @(posedge ACLK);
-    m0_BREADY <= 0;
-    m0_WVALID <= 0;
-    m0_WLAST <= 0;
+    while(s0_BVALID == 0) @(posedge ACLK);
+    s0_BREADY <= 0;
+    s0_WVALID <= 0;
+    s0_WLAST <= 0;
 endtask
 
-task m1_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
+task s1_write(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
     @(posedge ACLK);
-        m1_AWLEN <= len;
-        m1_AWVALID <= 1;
-        m1_WVALID <= 1;
-        m1_AWADDR <= addr;
+        s1_AWID <= id;
+        s1_AWLEN <= len;
+        s1_AWVALID <= 1;
+        s1_WVALID <= 1;
+        s1_AWADDR <= addr;
     @(posedge ACLK);
-    while(m1_AWREADY == 0) @(posedge ACLK);
-    m1_BREADY <= 1;
-    m1_AWVALID <= 0;
-    while(m1_WREADY == 0) @(posedge ACLK);
+    while(s1_AWREADY == 0) @(posedge ACLK);
+    s1_BREADY <= 1;
+    s1_AWVALID <= 0;
+    while(s1_WREADY == 0) @(posedge ACLK);
     for(int i=0; i<=len; i++) begin
-        m1_WDATA <= data[i];
-        if(i==len) m1_WLAST <= 1;
+        s1_WDATA <= data[i];
+        if(i==len) s1_WLAST <= 1;
         @(posedge ACLK);
-        while(m1_WREADY == 0) @(posedge ACLK);
+        while(s1_WREADY == 0) @(posedge ACLK);
     end
-    while(m1_BVALID == 0) @(posedge ACLK);
-    m1_BREADY <= 0;
-    m1_WVALID <= 0;
-    m1_WLAST <= 0;
+    while(s1_BVALID == 0) @(posedge ACLK);
+    s1_BREADY <= 0;
+    s1_WVALID <= 0;
+    s1_WLAST <= 0;
 endtask
 
-task m2_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
+task s2_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
     @(posedge ACLK);
-        m2_AWLEN <= len;
-        m2_AWVALID <= 1;
-        m2_WVALID <= 1;
-        m2_AWADDR <= addr;
+        s2_AWLEN <= len;
+        s2_AWVALID <= 1;
+        s2_WVALID <= 1;
+        s2_AWADDR <= addr;
     @(posedge ACLK);
-    while(m2_AWREADY == 0) @(posedge ACLK);
-    m2_BREADY <= 1;
-    m2_AWVALID <= 0;
-    while(m2_WREADY == 0) @(posedge ACLK);
+    while(s2_AWREADY == 0) @(posedge ACLK);
+    s2_BREADY <= 1;
+    s2_AWVALID <= 0;
+    while(s2_WREADY == 0) @(posedge ACLK);
     for(int i=0; i<=len; i++) begin
-        m2_WDATA <= data[i];
-        if(i==len-1) m2_WLAST <= 1;
+        s2_WDATA <= data[i];
+        if(i==len-1) s2_WLAST <= 1;
         @(posedge ACLK);
-        while(m2_WREADY == 0) @(posedge ACLK);
+        while(s2_WREADY == 0) @(posedge ACLK);
     end
-    while(m2_BVALID == 0) @(posedge ACLK);
-    m2_BREADY <= 0;
-    m2_WVALID <= 0;
-    m2_WLAST <= 0;
+    while(s2_BVALID == 0) @(posedge ACLK);
+    s2_BREADY <= 0;
+    s2_WVALID <= 0;
+    s2_WLAST <= 0;
 endtask
 
-task m3_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
+task s3_write(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, input bit[63:0] data[]);
     @(posedge ACLK);
-        m3_AWLEN <= len;
-        m3_AWVALID <= 1;
-        m3_WVALID <= 1;
-        m3_AWADDR <= addr;
+        s3_AWLEN <= len;
+        s3_AWVALID <= 1;
+        s3_WVALID <= 1;
+        s3_AWADDR <= addr;
     @(posedge ACLK);
-    while(m3_AWREADY == 0) @(posedge ACLK);
-    m3_BREADY <= 1;
-    m3_AWVALID <= 0;
-    while(m3_WREADY == 0) @(posedge ACLK);
+    while(s3_AWREADY == 0) @(posedge ACLK);
+    s3_BREADY <= 1;
+    s3_AWVALID <= 0;
+    while(s3_WREADY == 0) @(posedge ACLK);
     for(int i=0; i<=len; i++) begin
-        m3_WDATA <= data[i];
-        if(i==len-1) m3_WLAST <= 1;
+        s3_WDATA <= data[i];
+        if(i==len-1) s3_WLAST <= 1;
         @(posedge ACLK);
-        while(m3_WREADY == 0) @(posedge ACLK);
+        while(s3_WREADY == 0) @(posedge ACLK);
     end
-    while(m3_BVALID == 0) @(posedge ACLK);
-    m3_BREADY <= 0;
-    m3_WVALID <= 0;
-    m3_WLAST <= 0;
+    while(s3_BVALID == 0) @(posedge ACLK);
+    s3_BREADY <= 0;
+    s3_WVALID <= 0;
+    s3_WLAST <= 0;
 endtask
 
-task automatic m0_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
+task automatic s0_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
-    m0_ARLEN = len;
-    m0_ARVALID <= 1;
-    m0_ARADDR <= addr;
+    s0_ARLEN = len;
+    s0_ARVALID <= 1;
+    s0_ARADDR <= addr;
     @(posedge ACLK);
-    while(m0_ARREADY == 0) @(posedge ACLK);
-    m0_ARVALID <= 0;
+    while(s0_ARREADY == 0) @(posedge ACLK);
+    s0_ARVALID <= 0;
     @(posedge ACLK);
-    m0_RREADY <= 1;
+    s0_RREADY <= 1;
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(((m0_RVALID&m0_RREADY)!=1) || m_RID!=2'b00) @(posedge ACLK);
-        data[i] = m_RDATA; 
+        while(((s0_RVALID&s0_RREADY)!=1) || s0_RID!=2'b00) @(posedge ACLK);
+        data[i] = s0_RDATA; 
     end
     @(posedge ACLK);
-    while(m_RLAST == 0) @(posedge ACLK);
+    while(s0_RLAST == 0) @(posedge ACLK);
     @(posedge ACLK);  
-    while(m0_RVALID == 1) @(posedge ACLK);
-    m0_RREADY <= 0;
+    while(s0_RVALID == 1) @(posedge ACLK);
+    s0_RREADY <= 0;
 endtask
 
-task automatic m1_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
+task automatic s1_read(input bit[ID_WIDTH-1:0] id, input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
-    m1_ARLEN = len;
-    m1_ARVALID <= 1;
-    m1_ARADDR <= addr;
+    s1_ARLEN = len;
+    s1_ARVALID <= 1;
+    s1_ARADDR <= addr;
     @(posedge ACLK);
-    while(m1_ARREADY == 0) @(posedge ACLK);
-    m1_ARVALID <= 0;
+    while(s1_ARREADY == 0) @(posedge ACLK);
+    s1_ARVALID <= 0;
     @(posedge ACLK);
-    m1_RREADY <= 1;
+    s1_RREADY <= 1;
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(((m1_RVALID&m1_RREADY)!=1) || m_RID!=2'b01) @(posedge ACLK);
-        data[i] = m_RDATA;   
+        while(((s1_RVALID&s1_RREADY)!=1) || s1_RID!=2'b01) @(posedge ACLK);
+        data[i] = s1_RDATA;   
     end
     @(posedge ACLK);
-    while(m_RLAST == 0) @(posedge ACLK);
+    while(s1_RLAST == 0) @(posedge ACLK);
     @(posedge ACLK);
-    while(m1_RVALID == 1) @(posedge ACLK);
-    m1_RREADY <= 0;
+    while(s1_RVALID == 1) @(posedge ACLK);
+    s1_RREADY <= 0;
 endtask
 
-task automatic m2_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
+task automatic s2_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
-    m2_ARLEN = len;
-    m2_ARVALID <= 1;
+    s2_ARLEN = len;
+    s2_ARVALID <= 1;
     @(posedge ACLK);
-    while(m2_ARREADY == 0) @(posedge ACLK);
-    m2_RREADY <= 1;
-    m2_ARVALID <= 0;
-    while(m2_RVALID == 0) @(posedge ACLK);
+    while(s2_ARREADY == 0) @(posedge ACLK);
+    s2_RREADY <= 1;
+    s2_ARVALID <= 0;
+    while(s2_RVALID == 0) @(posedge ACLK);
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(m2_RVALID&m2_RREADY != 1) @(posedge ACLK);
-        data[i] = m_RDATA;
+        while(s2_RVALID&s2_RREADY != 1) @(posedge ACLK);
+        data[i] = s2_RDATA;
     end
-    m2_RREADY <= 0;
+    s2_RREADY <= 0;
 endtask
 
-task automatic m3_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
+task automatic s3_read(input bit[31:0] addr, input bit[BURST_LEN-1:0] len, ref bit[63:0] data[]);
     @(posedge ACLK);
-    m3_ARLEN = len;
-    m3_ARVALID <= 1;
+    s3_ARLEN = len;
+    s3_ARVALID <= 1;
     @(posedge ACLK);
-    while(m3_ARREADY == 0) @(posedge ACLK);
-    m3_RREADY <= 1;
-    m3_ARVALID <= 0;
-    while(m3_RVALID == 0) @(posedge ACLK);
+    while(s3_ARREADY == 0) @(posedge ACLK);
+    s3_RREADY <= 1;
+    s3_ARVALID <= 0;
+    while(s3_RVALID == 0) @(posedge ACLK);
     for (int i=0; i<len; i++) begin
         @(posedge ACLK);
-        while(m3_RVALID&m3_RREADY != 1) @(posedge ACLK);
-        data[i] = m_RDATA;
+        while(s3_RVALID&s3_RREADY != 1) @(posedge ACLK);
+        data[i] = s3_RDATA;
     end
-    m3_RREADY <= 0;
+    s3_RREADY <= 0;
 endtask

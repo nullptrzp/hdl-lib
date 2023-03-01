@@ -5,11 +5,11 @@ module AXI_Interconnect#(
                 USER_WIDTH  = 1024,             //USER位宽
                 STRB_WIDTH  = (DATA_WIDTH/8)    //STRB位宽
 )(
-	/********* 时钟&复位 *********/
+/********* 时钟&复位 *********/
 	input                   ACLK,
 	input      	            ARESETn,
 /********** 0号主控 **********/
- //写地址通道
+//写地址通道
 	input[ID_WIDTH-1:0]     s0_AWID,
     input[ADDR_WIDTH-1:0]   s0_AWADDR,
     input[7:0]              s0_AWLEN,
@@ -34,7 +34,7 @@ module AXI_Interconnect#(
 //写响应通道
     output                  s0_BVALID,
     input                   s0_BREADY,
-    output                  s0_BID,
+    output[ID_WIDTH-1:0]    s0_BID,
     output[1:0]             s0_BRESP,
     output[USER_WIDTH-1:0]  s0_BUSER,  
 //读地址通道
@@ -85,7 +85,7 @@ module AXI_Interconnect#(
 //写响应通道
     output                  s1_BVALID,
     input                   s1_BREADY,
-    output                  s1_BID,
+    output[ID_WIDTH-1:0]    s1_BID,
     output[1:0]             s1_BRESP,
     output[USER_WIDTH-1:0]  s1_BUSER,  
 //读地址通道
@@ -137,7 +137,7 @@ module AXI_Interconnect#(
 //写响应通道
     output                  s2_BVALID,
     input                   s2_BREADY,
-    output                  s2_BID,
+    output[ID_WIDTH-1:0]    s2_BID,
     output[1:0]             s2_BRESP,
     output[USER_WIDTH-1:0]  s2_BUSER,  
 //读地址通道
@@ -189,7 +189,7 @@ module AXI_Interconnect#(
 //写响应通道
     output                  s3_BVALID,
     input                   s3_BREADY,
-    output                  s3_BID,
+    output[ID_WIDTH-1:0]    s3_BID,
     output[1:0]             s3_BRESP,
     output[USER_WIDTH-1:0]  s3_BUSER,  
 //读地址通道
@@ -703,7 +703,7 @@ AXI_Master_Mux_R #(
     .s2m_RDATA(s2m_RDATA),
     .s2m_RRESP(s2m_RRESP),
     .s2m_RLAST(s2m_RLAST),
-    .s2m_ruser(s2m_RUSER),
+    .s2m_RUSER(s2m_RUSER),
 
     .s0_rgrnt(s0_rgrnt),
     .s1_rgrnt(s1_rgrnt),
